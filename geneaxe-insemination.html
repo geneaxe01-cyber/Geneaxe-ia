@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gene Axe — Certificat IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bleu: #1a4d8f;
+  --bleu-clair: #2563a8;
+  --rouge: #c0392b;
+  --vert: #1a7a3c;
+  --creme: #f8f6f1;
+  --gris: #6b7280;
+  --brun: #2d2010;
+  --blanc: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: #e8e4dc; min-height: 100vh; }
+
+/* ===== APP SHELL ===== */
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* HEADER */
+header {
+  background: var(--bleu);
+  color: white;
+  padding: 0 1.25rem;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(26,77,143,0.3);
+}
+.logo { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; }
+.logo span { color: #90c8f0; }
+.header-nav { display: flex; gap: 0.25rem; }
+.nav-btn {
+  background: none; border: none; color: rgba(255,255,255,0.75);
+  font-size: 0.8rem; font-weight: 500; padding: 0.4rem 0.75rem;
+  border-radius: 8px; cursor: pointer; transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,0.18); color: white; }
+
+/* PAGES */
+.page { display: none; padding: 1.25rem; max-width: 900px; margin: 0 auto; width: 100%; }
+.page.active { display: block; }
+
+/* CARDS */
+.card {
+  background: white; border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 1.25rem; margin-bottom: 1rem;
+}
+.card-title {
+  font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+  color: var(--bleu); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.card-title::before {
+  content: ''; display: block; width: 3px; height: 16px;
+  background: var(--bleu); border-radius: 2px;
+}
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+.form-group.full { grid-column: 1/-1; }
+label {
+  font-size: 0.72rem; font-weight: 600; color: var(--gris);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+input, select {
+  border: 1.5px solid #e0ddd6; border-radius: 10px;
+  padding: 0.6rem 0.85rem; font-size: 0.9rem;
+  font-family: 'DM Sans', sans-serif; color: var(--brun);
+  background: var(--creme); outline: none; transition: border-color 0.2s;
+}
+input:focus, select:focus { border-color: var(--bleu-clair); background: white; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.7rem 1.25rem; border-radius: 10px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; transition: all 0.18s;
+}
+.btn-primary { background: var(--bleu); color: white; }
+.btn-primary:hover { background: var(--bleu-clair); box-shadow: 0 4px 16px rgba(26,77,143,0.3); }
+.btn-green { background: var(--vert); color: white; }
+.btn-green:hover { background: #1d8f44; }
+.btn-outline { background: white; color: var(--bleu); border: 1.5px solid var(--bleu); }
+.btn-outline:hover { background: #eef4ff; }
+.btn-danger { background: #fdecea; color: var(--rouge); border: 1.5px solid #f5c6c2; }
+.btn-sm { padding: 0.4rem 0.75rem; font-size: 0.78rem; border-radius: 8px; }
+.btn-block { width: 100%; justify-content: center; margin-top: 1rem; font-size: 1rem; padding: 0.85rem; }
+
+/* BADGES */
+.badge {
+  display: inline-block; font-size: 0.7rem; font-weight: 600;
+  padding: 0.2rem 0.55rem; border-radius: 20px;
+}
+.badge-vert { background: #d4edda; color: #1a7a3c; }
+.badge-rouge { background: #fdecea; color: var(--rouge); }
+.badge-orange { background: #fef3e2; color: #b45309; }
+.badge-bleu { background: #dbeafe; color: var(--bleu); }
+
+/* LISTE IA */
+.ia-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.ia-item {
+  background: var(--creme); border-radius: 12px; padding: 1rem;
+  border-left: 3px solid var(--bleu); cursor: pointer; transition: all 0.18s;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.ia-item:hover { background: #eef2fa; border-left-color: var(--bleu-clair); }
+.ia-item-left { flex: 1; }
+.ia-item-num { font-family: 'Syne', sans-serif; font-size: 0.75rem; color: var(--rouge); font-weight: 700; margin-bottom: 0.25rem; }
+.ia-item-main { font-weight: 600; font-size: 0.9rem; color: var(--brun); }
+.ia-item-sub { font-size: 0.78rem; color: var(--gris); margin-top: 0.2rem; }
+
+/* TOOLBAR */
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap; }
+.page-title { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--brun); }
+
+/* SEARCH */
+.search-wrap { position: relative; flex: 1; min-width: 180px; max-width: 260px; }
+.search-wrap input { padding-left: 2.1rem; width: 100%; }
+.search-icon { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--gris); pointer-events: none; }
+
+/* STATS MINI */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+.stat-mini {
+  background: white; border-radius: 12px; padding: 0.875rem 1rem;
+  text-align: center; box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
+.stat-mini-val { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; }
+.stat-mini-lbl { font-size: 0.7rem; color: var(--gris); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 2.5rem 1rem; color: var(--gris); }
+.empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(30,20,10,0.5); backdrop-filter: blur(4px);
+  z-index: 200; align-items: flex-end; justify-content: center;
+  padding: 0;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white; border-radius: 20px 20px 0 0; padding: 1.5rem;
+  width: 100%; max-height: 92vh; overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+@media (min-width: 600px) {
+  .modal-overlay { align-items: center; padding: 1rem; }
+  .modal { border-radius: 20px; max-width: 680px; }
+}
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-handle { width: 40px; height: 4px; background: #e0ddd6; border-radius: 99px; margin: 0 auto 1rem; }
+.modal-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--brun); margin-bottom: 1.25rem; }
+
+/* ===== CERTIFICAT PRINT ===== */
+@media screen {
+  #certificat-preview {
+    background: white; border-radius: 12px; padding: 1rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1); margin-bottom: 1rem;
+    max-width: 680px; margin-left: auto; margin-right: auto;
+  }
+  .print-actions {
+    display: flex; gap: 0.75rem; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 2rem;
+  }
+}
+
+.certificat {
+  font-family: Arial, sans-serif;
+  width: 100%; max-width: 600px; margin: 0 auto;
+  border: 2.5px solid var(--bleu); padding: 16px;
+  color: #111;
+}
+
+.cert-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 8px; border-bottom: 2px solid var(--bleu); padding-bottom: 8px;
+}
+.cert-logo-left { font-size: 11px; }
+.cert-logo-left .company { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: var(--bleu); }
+.cert-logo-left .sub { color: var(--bleu); font-size: 10px; font-weight: 700; letter-spacing: 0.03em; }
+.cert-logo-right { text-align: right; font-size: 10px; color: var(--bleu); font-weight: 700; }
+.cert-logo-right .femaga { font-size: 14px; font-weight: 800; }
+
+.cert-main-title {
+  text-align: center; color: var(--bleu);
+  font-size: 13px; font-weight: 900; letter-spacing: 0.08em;
+  text-transform: uppercase; margin: 6px 0 2px;
+}
+.cert-subtitle {
+  text-align: center; font-size: 10px; color: var(--gris);
+  font-family: 'Tajawal', Arial, sans-serif;
+  margin-bottom: 4px;
+}
+.cert-num {
+  text-align: center; color: var(--rouge);
+  font-size: 11px; font-weight: 700; margin-bottom: 8px;
+}
+
+.cert-section { margin-bottom: 6px; }
+.cert-section-title {
+  font-size: 10px; font-weight: 700; color: var(--bleu);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid #dde4ef; padding-bottom: 2px; margin-bottom: 5px;
+}
+
+.cert-row {
+  display: flex; gap: 8px; margin-bottom: 5px; align-items: baseline;
+}
+.cert-field {
+  flex: 1; display: flex; flex-direction: column; gap: 1px;
+}
+.cert-field-label {
+  font-size: 8.5px; color: #555; font-weight: 600;
+}
+.cert-field-label-ar {
+  font-size: 8px; color: #555; font-family: 'Tajawal', Arial, sans-serif;
+  text-align: right; direction: rtl;
+}
+.cert-field-value {
+  border-bottom: 1px solid #aaa; min-height: 16px; font-size: 10px;
+  font-weight: 600; padding: 1px 2px; color: #111;
+}
+
+.cert-ia-box {
+  border: 1.5px solid var(--bleu); border-radius: 4px;
+  padding: 6px 8px; margin-bottom: 6px;
+}
+.cert-ia-title {
+  font-size: 10px; font-weight: 800; color: var(--rouge);
+  text-transform: uppercase; margin-bottom: 5px;
+}
+
+.cert-signatures {
+  display: flex; justify-content: space-between;
+  margin-top: 10px; gap: 12px;
+}
+.cert-sig { flex: 1; text-align: center; }
+.cert-sig-label { font-size: 9px; font-weight: 700; color: var(--bleu); text-transform: uppercase; }
+.cert-sig-box {
+  border: 1px solid #aaa; border-radius: 4px; height: 40px; margin-top: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: #aaa;
+}
+.cert-sig-name { font-size: 9px; margin-top: 3px; font-weight: 600; color: #333; }
+
+.cert-footer {
+  margin-top: 8px; padding-top: 6px; border-top: 1px solid #dde;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 8px; color: var(--gris);
+}
+
+@media print {
+  body * { visibility: hidden; }
+  #certificat-preview, #certificat-preview * { visibility: visible; }
+  #certificat-preview {
+    position: fixed; left: 0; top: 0;
+    width: 100%; padding: 8mm;
+    box-shadow: none; border-radius: 0;
+  }
+  .print-actions { display: none !important; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: 1; }
+  .cert-main-title { font-size: 11px; }
+  .cert-logos { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<header>
+  <div class="logo">Gene<span>Axe</span> IA</div>
+  <nav class="header-nav">
+    <button class="nav-btn active" onclick="goPage('accueil',this)">🏠</button>
+    <button class="nav-btn" onclick="goPage('nouvelle',this)">+ IA</button>
+    <button class="nav-btn" onclick="goPage('historique',this)">📋</button>
+    <button class="nav-btn" onclick="goPage('eleveurs',this)">👨‍🌾</button>
+  </nav>
+</header>
+
+<!-- ===== ACCUEIL ===== -->
+<div class="page active" id="page-accueil">
+  <div style="margin-bottom:1rem;">
+    <div class="page-title">Tableau de bord</div>
+    <div style="font-size:0.82rem;color:var(--gris)" id="date-today"></div>
+  </div>
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="card">
+    <div class="card-title">Inséminations du jour</div>
+    <div id="ia-today"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Taux de réussite par taureau</div>
+    <div id="taux-taureaux"></div>
+  </div>
+</div>
+
+<!-- ===== NOUVELLE IA ===== -->
+<div class="page" id="page-nouvelle">
+  <div class="page-title" style="margin-bottom:1rem;">💉 Nouvelle insémination</div>
+
+  <div class="card">
+    <div class="card-title">Éleveur & Animal</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Commune (الجماعة)</label>
+        <input type="text" id="n-commune" placeholder="Ex: Settat">
+      </div>
+      <div class="form-group">
+        <label>Douar (دوار)</label>
+        <input type="text" id="n-douar" placeholder="Ex: Laaïun">
+      </div>
+      <div class="form-group">
+        <label>Nom de l'éleveur *</label>
+        <input type="text" id="n-eleveur" list="list-eleveurs" placeholder="Nom complet" oninput="autocompleteEleveur()">
+        <datalist id="list-eleveurs"></datalist>
+      </div>
+      <div class="form-group">
+        <label>Code de l'éleveur</label>
+        <input type="text" id="n-code-eleveur" placeholder="Ex: 1234567">
+      </div>
+      <div class="form-group">
+        <label>Nom du circuit IA</label>
+        <input type="text" id="n-circuit" placeholder="Nom du circuit">
+      </div>
+      <div class="form-group">
+        <label>Code du circuit IA</label>
+        <input type="text" id="n-code-circuit" placeholder="Ex: MA-FCK...">
+      </div>
+      <div class="form-group">
+        <label>Identification MA... *</label>
+        <input type="text" id="n-id-animal" placeholder="Ex: MA 6070...">
+      </div>
+      <div class="form-group">
+        <label>Nom vache / génisse</label>
+        <input type="text" id="n-nom-animal" placeholder="Nom ou surnom">
+      </div>
+      <div class="form-group">
+        <label>Date de naissance / Âge</label>
+        <input type="text" id="n-age" placeholder="Ex: 3 ans ou 12/05/2021">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Insémination actuelle</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Date *</label>
+        <input type="date" id="n-date">
+      </div>
+      <div class="form-group">
+        <label>Heure</label>
+        <input type="time" id="n-heure">
+      </div>
+      <div class="form-group">
+        <label>Rang (IA n°)</label>
+        <select id="n-rang">
+          <option value="1">1ère IA</option>
+          <option value="2">2ème IA</option>
+          <option value="3">3ème IA</option>
+          <option value="4">4ème IA</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>N° paillette</label>
+        <input type="text" id="n-paillette" placeholder="Ex: FR1234-A">
+      </div>
+      <div class="form-group">
+        <label>Taureau utilisé *</label>
+        <input type="text" id="n-taureau" list="list-taureaux" placeholder="Nom du taureau">
+        <datalist id="list-taureaux"></datalist>
+      </div>
+      <div class="form-group">
+        <label>Race</label>
+        <input type="text" id="n-race" placeholder="Ex: Prim'Holstein">
+      </div>
+      <div class="form-group">
+        <label>Résultat (si déjà connu)</label>
+        <select id="n-resultat">
+          <option value="attente">En attente</option>
+          <option value="gestante">✅ Gestante</option>
+          <option value="vide">❌ Vide</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>N° certificat</label>
+        <input type="text" id="n-num-cert" placeholder="Auto-généré">
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+    <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="saveIA()">✓ Enregistrer</button>
+    <button class="btn btn-green" style="flex:1;justify-content:center;" onclick="saveAndPrint()">🖨 Enregistrer & Imprimer</button>
+  </div>
+</div>
+
+<!-- ===== HISTORIQUE ===== -->
+<div class="page" id="page-historique">
+  <div class="toolbar">
+    <div class="page-title">Inséminations</div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-hist" placeholder="Rechercher..." oninput="renderHistorique()">
+    </div>
+  </div>
+  <div id="hist-list"></div>
+</div>
+
+<!-- ===== ÉLEVEURS ===== -->
+<div class="page" id="page-eleveurs">
+  <div class="toolbar">
+    <div class="page-title">Mes éleveurs</div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-eleveur')">+ Ajouter</button>
+  </div>
+  <div id="eleveurs-list"></div>
+</div>
+
+</div><!-- end #app -->
+
+<!-- MODAL ÉLEVEUR -->
+<div class="modal-overlay" id="modal-eleveur">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">👨‍🌾 Nouvel éleveur</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nom *</label>
+        <input type="text" id="e-nom" placeholder="Nom complet">
+      </div>
+      <div class="form-group">
+        <label>Code éleveur</label>
+        <input type="text" id="e-code" placeholder="Code">
+      </div>
+      <div class="form-group">
+        <label>Commune</label>
+        <input type="text" id="e-commune" placeholder="Commune">
+      </div>
+      <div class="form-group">
+        <label>Douar</label>
+        <input type="text" id="e-douar" placeholder="Douar">
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" id="e-tel" placeholder="06...">
+      </div>
+      <div class="form-group">
+        <label>Circuit IA</label>
+        <input type="text" id="e-circuit" placeholder="Nom du circuit">
+      </div>
+    </div>
+    <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="saveEleveur()">✓ Enregistrer</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-eleveur')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CERTIFICAT -->
+<div class="modal-overlay" id="modal-certificat">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📄 Certificat d'insémination</div>
+    <div id="certificat-preview"></div>
+    <div class="print-actions">
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimer</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-certificat')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESULTAT -->
+<div class="modal-overlay" id="modal-resultat">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="res-title">Mettre à jour le résultat</div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem;">
+      <button class="btn btn-green btn-block" onclick="setResultat('gestante')">✅ Gestante (réussite)</button>
+      <button class="btn btn-danger btn-block" onclick="setResultat('vide')">❌ Vide (échec)</button>
+      <button class="btn btn-outline btn-block" onclick="setResultat('attente')">⏳ En attente</button>
+      <button class="btn btn-outline btn-block" onclick="closeModal('modal-resultat')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== DONNÉES ======
+let DB = JSON.parse(localStorage.getItem('geneaxe') || 'null') || { ia: [], eleveurs: [], nextNum: 10001 };
+let currentIAId = null;
+
+const TECH_NOM = 'Technicien Inséminateur';
+const TECH_TEL = '06';
+
+function save() { localStorage.setItem('geneaxe', JSON.stringify(DB)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function nowTime() { return new Date().toTimeString().slice(0,5); }
+function fmt(d) { if (!d) return '—'; const [y,m,j] = d.split('-'); return `${j}/${m}/${y}`; }
+
+// ====== NAVIGATION ======
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'nouvelle') initNouvelleForm();
+  render();
+}
+
+// ====== MODALS ======
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ====== INIT FORM ======
+function initNouvelleForm() {
+  document.getElementById('n-date').value = today();
+  document.getElementById('n-heure').value = nowTime();
+  document.getElementById('n-num-cert').value = String(DB.nextNum);
+  // Autocomplete taureaux
+  const taureaux = [...new Set(DB.ia.map(i => i.taureau).filter(Boolean))];
+  document.getElementById('list-taureaux').innerHTML = taureaux.map(t => `<option value="${t}">`).join('');
+  // Autocomplete éleveurs
+  document.getElementById('list-eleveurs').innerHTML = DB.eleveurs.map(e => `<option value="${e.nom}">`).join('');
+}
+
+function autocompleteEleveur() {
+  const nom = document.getElementById('n-eleveur').value.trim();
+  const elev = DB.eleveurs.find(e => e.nom.toLowerCase() === nom.toLowerCase());
+  if (elev) {
+    if (elev.commune) document.getElementById('n-commune').value = elev.commune;
+    if (elev.douar) document.getElementById('n-douar').value = elev.douar;
+    if (elev.code) document.getElementById('n-code-eleveur').value = elev.code;
+    if (elev.circuit) document.getElementById('n-circuit').value = elev.circuit;
+  }
+}
+
+// ====== SAVE IA ======
+function collectForm() {
+  return {
+    id: uid(),
+    numCert: document.getElementById('n-num-cert').value || String(DB.nextNum),
+    commune: document.getElementById('n-commune').value.trim(),
+    douar: document.getElementById('n-douar').value.trim(),
+    eleveur: document.getElementById('n-eleveur').value.trim(),
+    codeEleveur: document.getElementById('n-code-eleveur').value.trim(),
+    circuit: document.getElementById('n-circuit').value.trim(),
+    codeCircuit: document.getElementById('n-code-circuit').value.trim(),
+    idAnimal: document.getElementById('n-id-animal').value.trim(),
+    nomAnimal: document.getElementById('n-nom-animal').value.trim(),
+    age: document.getElementById('n-age').value.trim(),
+    date: document.getElementById('n-date').value,
+    heure: document.getElementById('n-heure').value,
+    rang: document.getElementById('n-rang').value,
+    paillette: document.getElementById('n-paillette').value.trim(),
+    taureau: document.getElementById('n-taureau').value.trim(),
+    race: document.getElementById('n-race').value.trim(),
+    resultat: document.getElementById('n-resultat').value,
+  };
+}
+
+function validateForm(ia) {
+  if (!ia.eleveur) { alert('Le nom de l\'éleveur est obligatoire'); return false; }
+  if (!ia.idAnimal) { alert('L\'identification de l\'animal est obligatoire'); return false; }
+  if (!ia.taureau) { alert('Le taureau est obligatoire'); return false; }
+  return true;
+}
+
+function saveIA() {
+  const ia = collectForm();
+  if (!validateForm(ia)) return;
+  DB.ia.unshift(ia);
+  DB.nextNum++;
+  // Sauvegarder éleveur si nouveau
+  if (!DB.eleveurs.find(e => e.nom.toLowerCase() === ia.eleveur.toLowerCase())) {
+    DB.eleveurs.push({ id: uid(), nom: ia.eleveur, code: ia.codeEleveur, commune: ia.commune, douar: ia.douar, circuit: ia.circuit });
+  }
+  save();
+  alert('✅ Insémination enregistrée !');
+  resetForm();
+  goPage('historique', document.querySelectorAll('.nav-btn')[2]);
+}
+
+function saveAndPrint() {
+  const ia = collectForm();
+  if (!validateForm(ia)) return;
+  DB.ia.unshift(ia);
+  DB.nextNum++;
+  if (!DB.eleveurs.find(e => e.nom.toLowerCase() === ia.eleveur.toLowerCase())) {
+    DB.eleveurs.push({ id: uid(), nom: ia.eleveur, code: ia.codeEleveur, commune: ia.commune, douar: ia.douar, circuit: ia.circuit });
+  }
+  save();
+  resetForm();
+  showCertificat(ia);
+}
+
+function resetForm() {
+  ['n-commune','n-douar','n-eleveur','n-code-eleveur','n-circuit','n-code-circuit',
+   'n-id-animal','n-nom-animal','n-age','n-paillette','n-taureau','n-race'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('n-rang').value = '1';
+  document.getElementById('n-resultat').value = 'attente';
+  document.getElementById('n-date').value = today();
+  document.getElementById('n-heure').value = nowTime();
+  document.getElementById('n-num-cert').value = String(DB.nextNum);
+}
+
+// ====== CERTIFICAT ======
+function showCertificat(ia) {
+  document.getElementById('certificat-preview').innerHTML = buildCertificat(ia);
+  openModal('modal-certificat');
+}
+
+function buildCertificat(ia) {
+  const rangLabel = ['','1ère','2ème','3ème','4ème'][ia.rang] || ia.rang + 'ème';
+  return `
+  <div class="certificat">
+    <div class="cert-header">
+      <div class="cert-logo-left">
+        <div class="company">Gene Axe <small style="font-size:10px;font-weight:400">Sarl AU</small></div>
+        <div class="sub">AGRICULTURE</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:9px;color:var(--bleu);font-weight:700;">🐄 FEMAGA</div>
+        <div style="font-size:7px;color:var(--gris);">الفيدرالية المغربية لمجموعات إنعاش الجينات الحيوانية</div>
+      </div>
+      <div class="cert-logo-right">
+        <div>تقنيان التلقيح الاصطناعي</div>
+        <div style="font-size:8px;font-weight:400">TECHNICIENS I.A</div>
+      </div>
+    </div>
+
+    <div class="cert-main-title">Certificat d'insémination artificielle</div>
+    <div class="cert-subtitle">شهادة التلقيح الاصطناعي</div>
+    <div class="cert-num">N° ${ia.numCert}</div>
+
+    <div class="cert-section">
+      <div class="cert-section-title">Localisation — الموقع الجغرافي</div>
+      <div class="cert-row">
+        <div class="cert-field">
+          <div class="cert-field-label">Commune — الجماعة</div>
+          <div class="cert-field-value">${ia.commune || ''}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Douar — دوار</div>
+          <div class="cert-field-value">${ia.douar || ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cert-section">
+      <div class="cert-section-title">Circuit & Éleveur — الدائرة والمربي</div>
+      <div class="cert-row">
+        <div class="cert-field">
+          <div class="cert-field-label">Nom du circuit IA</div>
+          <div class="cert-field-value">${ia.circuit || ''}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Code du circuit IA</div>
+          <div class="cert-field-value">${ia.codeCircuit || ''}</div>
+        </div>
+      </div>
+      <div class="cert-row">
+        <div class="cert-field">
+          <div class="cert-field-label">Nom de l'éleveur — اسم المربي</div>
+          <div class="cert-field-value">${ia.eleveur || ''}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Code de l'éleveur</div>
+          <div class="cert-field-value">${ia.codeEleveur || ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cert-section">
+      <div class="cert-section-title">Animal — الحيوان</div>
+      <div class="cert-row">
+        <div class="cert-field">
+          <div class="cert-field-label">Identification MA</div>
+          <div class="cert-field-value">${ia.idAnimal || ''}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Nom vache / génisse</div>
+          <div class="cert-field-value">${ia.nomAnimal || ''}</div>
+        </div>
+        <div class="cert-field" style="max-width:100px;">
+          <div class="cert-field-label">Date naiss. / Âge</div>
+          <div class="cert-field-value">${ia.age || ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cert-ia-box">
+      <div class="cert-ia-title">Insémination actuelle — التلقيح الحالي</div>
+      <div class="cert-row">
+        <div class="cert-field">
+          <div class="cert-field-label">Rang</div>
+          <div class="cert-field-value">${rangLabel} IA</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Date</div>
+          <div class="cert-field-value">${fmt(ia.date)}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Heure</div>
+          <div class="cert-field-value">${ia.heure || ''} H</div>
+        </div>
+      </div>
+      <div class="cert-row">
+        <div class="cert-field">
+          <div class="cert-field-label">Taureau utilisé</div>
+          <div class="cert-field-value">${ia.taureau || ''}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">N° paillette</div>
+          <div class="cert-field-value">${ia.paillette || ''}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Race</div>
+          <div class="cert-field-value">${ia.race || ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cert-signatures">
+      <div class="cert-sig">
+        <div class="cert-sig-label">Signature technicien inséminateur</div>
+        <div class="cert-sig-box"></div>
+        <div class="cert-sig-name">${TECH_NOM}</div>
+        <div style="font-size:8px;color:var(--gris);">Tél : ${TECH_TEL}</div>
+      </div>
+      <div class="cert-sig">
+        <div class="cert-sig-label">Signature de l'éleveur / اسم المربي</div>
+        <div class="cert-sig-box"></div>
+        <div class="cert-sig-name">${ia.eleveur || ''}</div>
+      </div>
+    </div>
+
+    <div class="cert-footer">
+      <span>Gene Axe Sarl AU — FEMAGA</span>
+      <span>Certificat N° ${ia.numCert} | ${fmt(ia.date)}</span>
+    </div>
+  </div>`;
+}
+
+// ====== RENDER ======
+function render() {
+  renderAccueil();
+  renderHistorique();
+  renderEleveurs();
+}
+
+function renderAccueil() {
+  const todayStr = today();
+  document.getElementById('date-today').textContent = new Date().toLocaleDateString('fr-MA', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const iaAujourdhui = DB.ia.filter(i => i.date === todayStr);
+  const total = DB.ia.length;
+  const gestantes = DB.ia.filter(i => i.resultat === 'gestante').length;
+  const avecResultat = DB.ia.filter(i => i.resultat !== 'attente').length;
+  const taux = avecResultat ? Math.round((gestantes / avecResultat) * 100) : 0;
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-mini"><div class="stat-mini-val">${iaAujourdhui.length}</div><div class="stat-mini-lbl">Aujourd'hui</div></div>
+    <div class="stat-mini"><div class="stat-mini-val">${total}</div><div class="stat-mini-lbl">Total IA</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" style="color:var(--vert)">${gestantes}</div><div class="stat-mini-lbl">Gestantes</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" style="color:var(--bleu)">${taux}%</div><div class="stat-mini-lbl">Réussite</div></div>
+  `;
+
+  if (!iaAujourdhui.length) {
+    document.getElementById('ia-today').innerHTML = '<div class="empty"><div class="empty-icon">🌅</div><p>Aucune insémination aujourd\'hui</p></div>';
+  } else {
+    document.getElementById('ia-today').innerHTML = '<div class="ia-list">' + iaAujourdhui.map(ia => iaCard(ia)).join('') + '</div>';
+  }
+
+  // Taux par taureau
+  const taureaux = {};
+  DB.ia.forEach(i => {
+    if (!i.taureau) return;
+    if (!taureaux[i.taureau]) taureaux[i.taureau] = { total: 0, pos: 0 };
+    taureaux[i.taureau].total++;
+    if (i.resultat === 'gestante') taureaux[i.taureau].pos++;
+  });
+  const arr = Object.entries(taureaux).sort((a,b) => b[1].total - a[1].total).slice(0,6);
+  document.getElementById('taux-taureaux').innerHTML = arr.length ? arr.map(([nom, s]) => {
+    const t = s.total ? Math.round((s.pos / s.total) * 100) : 0;
+    const color = t >= 60 ? 'var(--vert)' : t >= 40 ? '#b45309' : 'var(--rouge)';
+    return `<div style="margin-bottom:0.875rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;font-size:0.85rem;">
+        <span style="font-weight:600">${nom}</span>
+        <span style="color:${color};font-weight:700">${t}% <span style="color:var(--gris);font-weight:400">(${s.pos}/${s.total})</span></span>
+      </div>
+      <div style="background:#eee;border-radius:99px;height:8px;overflow:hidden;">
+        <div style="width:${t}%;height:100%;background:${color};border-radius:99px;transition:width 0.6s ease;"></div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty"><p>Aucune donnée</p></div>';
+}
+
+function iaCard(ia) {
+  const badge = {
+    gestante: '<span class="badge badge-vert">✅ Gestante</span>',
+    vide: '<span class="badge badge-rouge">❌ Vide</span>',
+    attente: '<span class="badge badge-orange">⏳ En attente</span>'
+  }[ia.resultat] || '';
+  return `<div class="ia-item" onclick="openIAActions('${ia.id}')">
+    <div class="ia-item-left">
+      <div class="ia-item-num">N° ${ia.numCert}</div>
+      <div class="ia-item-main">${ia.eleveur} — ${ia.idAnimal || ia.nomAnimal}</div>
+      <div class="ia-item-sub">${fmt(ia.date)} ${ia.heure ? '· '+ia.heure : ''} · ${ia.taureau} · ${['','1ère','2ème','3ème','4ème'][ia.rang]||ia.rang+'ème'} IA</div>
+    </div>
+    <div style="margin-left:0.75rem;">${badge}</div>
+  </div>`;
+}
+
+function renderHistorique() {
+  const q = (document.getElementById('search-hist')?.value || '').toLowerCase();
+  const liste = DB.ia.filter(i =>
+    !q || i.eleveur?.toLowerCase().includes(q) || i.taureau?.toLowerCase().includes(q) ||
+    i.idAnimal?.toLowerCase().includes(q) || i.commune?.toLowerCase().includes(q)
+  );
+  const el = document.getElementById('hist-list');
+  if (!liste.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Aucune insémination enregistrée</p></div>'; return;
+  }
+  el.innerHTML = '<div class="ia-list">' + liste.map(ia => iaCard(ia)).join('') + '</div>';
+}
+
+function renderEleveurs() {
+  const el = document.getElementById('eleveurs-list');
+  if (!DB.eleveurs.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">👨‍🌾</div><p>Aucun éleveur enregistré</p></div>'; return;
+  }
+  el.innerHTML = '<div class="ia-list">' + DB.eleveurs.map(e => {
+    const nIA = DB.ia.filter(i => i.eleveur?.toLowerCase() === e.nom.toLowerCase()).length;
+    return `<div class="ia-item">
+      <div class="ia-item-left">
+        <div class="ia-item-main">${e.nom}</div>
+        <div class="ia-item-sub">${[e.commune, e.douar].filter(Boolean).join(' · ')} ${e.tel ? '· 📞 '+e.tel : ''}</div>
+        <div class="ia-item-sub">${nIA} insémination(s)</div>
+      </div>
+      <button class="btn btn-sm btn-outline" onclick="filterEleveur('${e.nom}')">Voir IA</button>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+// ====== IA ACTIONS ======
+function openIAActions(id) {
+  currentIAId = id;
+  const ia = DB.ia.find(i => i.id === id);
+  if (!ia) return;
+  document.getElementById('res-title').textContent = `${ia.eleveur} — ${ia.idAnimal || ia.nomAnimal}`;
+
+  // Show menu
+  const menu = document.createElement('div');
+  menu.className = 'modal-overlay open';
+  menu.id = 'modal-actions-temp';
+  menu.innerHTML = `<div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">${ia.eleveur}</div>
+    <div style="font-size:0.82rem;color:var(--gris);margin-bottom:1rem;">${fmt(ia.date)} · N° ${ia.numCert}</div>
+    <div style="display:flex;flex-direction:column;gap:0.65rem;">
+      <button class="btn btn-primary btn-block" onclick="printIA('${id}')">🖨️ Imprimer le certificat</button>
+      <button class="btn btn-outline btn-block" onclick="openResultatModal('${id}')">📝 Mettre à jour le résultat</button>
+      <button class="btn btn-danger btn-block" onclick="deleteIA('${id}')">🗑 Supprimer</button>
+      <button class="btn btn-outline btn-block" onclick="document.getElementById('modal-actions-temp').remove()">Fermer</button>
+    </div>
+  </div>`;
+  menu.addEventListener('click', e => { if (e.target === menu) menu.remove(); });
+  document.body.appendChild(menu);
+}
+
+function printIA(id) {
+  const ia = DB.ia.find(i => i.id === id);
+  document.getElementById('modal-actions-temp')?.remove();
+  if (ia) showCertificat(ia);
+}
+
+function openResultatModal(id) {
+  document.getElementById('modal-actions-temp')?.remove();
+  currentIAId = id;
+  openModal('modal-resultat');
+}
+
+function setResultat(r) {
+  const ia = DB.ia.find(i => i.id === currentIAId);
+  if (ia) { ia.resultat = r; save(); }
+  closeModal('modal-resultat');
+  render();
+}
+
+function deleteIA(id) {
+  document.getElementById('modal-actions-temp')?.remove();
+  if (!confirm('Supprimer cette insémination ?')) return;
+  DB.ia = DB.ia.filter(i => i.id !== id);
+  save(); render();
+}
+
+// ====== ÉLEVEURS ======
+function saveEleveur() {
+  const nom = document.getElementById('e-nom').value.trim();
+  if (!nom) { alert('Le nom est obligatoire'); return; }
+  DB.eleveurs.push({
+    id: uid(), nom,
+    code: document.getElementById('e-code').value.trim(),
+    commune: document.getElementById('e-commune').value.trim(),
+    douar: document.getElementById('e-douar').value.trim(),
+    tel: document.getElementById('e-tel').value.trim(),
+    circuit: document.getElementById('e-circuit').value.trim(),
+  });
+  save(); closeModal('modal-eleveur');
+  ['e-nom','e-code','e-commune','e-douar','e-tel','e-circuit'].forEach(id => document.getElementById(id).value = '');
+  render();
+}
+
+function filterEleveur(nom) {
+  document.getElementById('search-hist').value = nom;
+  goPage('historique', document.querySelectorAll('.nav-btn')[2]);
+}
+
+// ====== INIT ======
+initNouvelleForm();
+render();
+</script>
+</body>
+</html>
