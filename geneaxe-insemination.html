@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gene Axe IA</title>
+<meta name="theme-color" content="#0d1f0d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GeneAxe">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230d1f0d'/%3E%3Cpath d='M48 150 C48 150 44 96 76 62 C100 38 140 34 148 34 C148 34 152 72 128 100 C104 130 68 140 48 150Z' fill='%2343a047'/%3E%3Cpath d='M48 150 C72 114 100 86 148 34' stroke='%23c9a84c' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M34 48 C44 58 34 72 44 82 C54 92 44 106 54 116' stroke='%23c9a84c' stroke-width='5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M54 48 C44 58 54 72 44 82 C34 92 44 106 34 116' stroke='%2366bb6a' stroke-width='5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230d1f0d'/%3E%3Cpath d='M48 150 C48 150 44 96 76 62 C100 38 140 34 148 34 C148 34 152 72 128 100 C104 130 68 140 48 150Z' fill='%2343a047'/%3E%3Cpath d='M48 150 C72 114 100 86 148 34' stroke='%23c9a84c' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--vert:#1b5e20;--vert2:#2e7d32;--or:#c9a84c;--or2:#e8c96a;--rouge:#c0392b;--creme:#f8f6ef;--gris:#6b7280;--brun:#1a1200;--blanc:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#e8ede4;min-height:100vh}
+header{background:linear-gradient(135deg,#0d1f0d,#122412);color:#fff;padding:0 1.25rem;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.35),0 1px 0 rgba(201,168,76,.2);border-bottom:1px solid rgba(201,168,76,.15)}
+.logo{display:flex;align-items:center;gap:.6rem}
+.logo svg{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(201,168,76,.4))}
+.logo-text{display:flex;flex-direction:column;line-height:1}
+.logo-name{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;background:linear-gradient(135deg,#e8c96a,#c9a84c,#f0d882);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-name span{background:linear-gradient(135deg,#7ed07e,#43a047);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{font-size:.5rem;letter-spacing:.18em;color:rgba(201,168,76,.5);text-transform:uppercase;margin-top:2px}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,.65);font-size:.78rem;font-weight:500;padding:.4rem .7rem;border-radius:8px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.nav-btn:hover{background:rgba(201,168,76,.12);color:rgba(201,168,76,.9)}
+.nav-btn.active{background:rgba(201,168,76,.18);color:#c9a84c}
+.page{display:none;padding:1.25rem;max-width:900px;margin:0 auto;width:100%}
+.page.active{display:block}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--vert);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.card-title::before{content:'';display:block;width:3px;height:16px;background:linear-gradient(180deg,#c9a84c,#2e7d32);border-radius:2px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.form-group{display:flex;flex-direction:column;gap:.35rem}
+.form-group.full{grid-column:1/-1}
+label{font-size:.72rem;font-weight:600;color:var(--gris);text-transform:uppercase;letter-spacing:.05em}
+input,select{border:1.5px solid #e0ddd6;border-radius:10px;padding:.6rem .85rem;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--brun);background:var(--creme);outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--vert2);background:#fff}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.25rem;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .18s}
+.btn-primary{background:var(--vert);color:#fff}
+.btn-primary:hover{background:var(--vert2)}
+.btn-green{background:#1a7a3c;color:#fff}
+.btn-outline{background:#fff;color:var(--vert);border:1.5px solid var(--vert)}
+.btn-danger{background:#fdecea;color:var(--rouge);border:1.5px solid #f5c6c2}
+.btn-sm{padding:.4rem .75rem;font-size:.78rem;border-radius:8px}
+.badge{display:inline-block;font-size:.7rem;font-weight:600;padding:.2rem .55rem;border-radius:20px}
+.badge-vert{background:#d4edda;color:#1a7a3c}
+.badge-rouge{background:#fdecea;color:var(--rouge)}
+.badge-orange{background:#fef3e2;color:#b45309}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem}
+.stat-mini{background:#fff;border-radius:12px;padding:.875rem 1rem;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.stat-mini-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800}
+.stat-mini-lbl{font-size:.7rem;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-top:.15rem}
+.ia-list{display:flex;flex-direction:column;gap:.75rem}
+.ia-item{background:var(--creme);border-radius:12px;padding:1rem;border-left:3px solid var(--vert);cursor:pointer;transition:all .18s;display:flex;justify-content:space-between;align-items:flex-start}
+.ia-item:hover{background:#eef2fa;border-left-color:var(--vert2)}
+.ia-item-num{font-family:'Syne',sans-serif;font-size:.75rem;color:var(--rouge);font-weight:700;margin-bottom:.25rem}
+.ia-item-main{font-weight:600;font-size:.9rem;color:var(--brun)}
+.ia-item-sub{font-size:.78rem;color:var(--gris);margin-top:.2rem}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:.75rem;flex-wrap:wrap}
+.page-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--brun)}
+.search-wrap{position:relative;flex:1;min-width:180px;max-width:260px}
+.search-wrap input{padding-left:2.1rem;width:100%}
+.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--gris);pointer-events:none}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--gris)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(30,20,10,.5);backdrop-filter:blur(4px);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:1.5rem;width:100%;max-height:92vh;overflow-y:auto;animation:slideUp .25s ease}
+@media(min-width:600px){.modal-overlay{align-items:center;padding:1rem}.modal{border-radius:20px;max-width:680px}}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:40px;height:4px;background:#e0ddd6;border-radius:99px;margin:0 auto 1rem}
+.modal-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--brun);margin-bottom:1.25rem}
+#certificat-preview{background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 12px rgba(0,0,0,.1);margin-bottom:1rem}
+.print-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+.certificat{font-family:Arial,sans-serif;width:100%;max-width:600px;margin:0 auto;border:2.5px solid #1b5e20;padding:16px;color:#111}
+.cert-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;border-bottom:2px solid #c9a84c;padding-bottom:8px}
+.cert-main-title{text-align:center;color:#1b5e20;font-size:14px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin:6px 0 2px}
+.cert-subtitle{text-align:center;font-size:11px;color:var(--gris);font-family:'Tajawal',Arial,sans-serif;margin-bottom:4px}
+.cert-num{text-align:center;color:var(--rouge);font-size:11px;font-weight:700;margin-bottom:8px}
+.cert-section{margin-bottom:6px}
+.cert-section-title{font-size:10px;font-weight:700;color:#1b5e20;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #c8e6c9;padding-bottom:2px;margin-bottom:5px}
+.cert-row{display:flex;gap:8px;margin-bottom:5px;align-items:baseline}
+.cert-field{flex:1;display:flex;flex-direction:column;gap:1px}
+.cert-field-label{font-size:8.5px;color:#555;font-weight:600}
+.cert-field-value{border-bottom:1px solid #aaa;min-height:16px;font-size:10px;font-weight:600;padding:1px 2px;color:#111}
+.cert-ia-box{border:1.5px solid #c9a84c;border-radius:4px;padding:6px 8px;margin-bottom:6px;background:#fffdf5}
+.cert-ia-title{font-size:10px;font-weight:800;color:#c9a84c;text-transform:uppercase;margin-bottom:5px}
+.cert-signatures{display:flex;justify-content:space-between;margin-top:10px;gap:12px}
+.cert-sig{flex:1;text-align:center}
+.cert-sig-label{font-size:9px;font-weight:700;color:#1b5e20;text-transform:uppercase}
+.cert-sig-box{border:1px solid #aaa;border-radius:4px;height:40px;margin-top:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa}
+.cert-sig-name{font-size:9px;margin-top:3px;font-weight:600;color:#333}
+.cert-footer{margin-top:8px;padding-top:6px;border-top:1px solid #dde;display:flex;justify-content:space-between;font-size:8px;color:var(--gris)}
+@media print{
+  body *{visibility:hidden}
+  #certificat-preview,#certificat-preview *{visibility:visible}
+  #certificat-preview{position:fixed;left:0;top:0;width:100%;height:100%;padding:5mm;box-shadow:none;border-radius:0;margin:0}
+  .certificat{width:100%!important;max-width:100%!important;min-height:190mm;padding:10px!important;border-width:3px!important}
+  .cert-header{padding-bottom:12px!important;margin-bottom:12px!important}
+  .cert-main-title{font-size:17pt!important;margin:8px 0 4px!important}
+  .cert-subtitle{font-size:12pt!important;margin-bottom:6px!important}
+  .cert-num{font-size:13pt!important;margin-bottom:10px!important}
+  .cert-section-title{font-size:10pt!important;padding-bottom:3px!important;margin-bottom:6px!important}
+  .cert-field-label{font-size:8pt!important}
+  .cert-field-value{font-size:12pt!important;min-height:22px!important;padding:2px 3px!important}
+  .cert-section{margin-bottom:8px!important}
+  .cert-row{margin-bottom:7px!important}
+  .cert-ia-box{padding:8px 10px!important;margin-bottom:10px!important}
+  .cert-ia-title{font-size:11pt!important;margin-bottom:7px!important}
+  .cert-sig-label{font-size:9pt!important}
+  .cert-sig-box{height:55px!important;margin-top:6px!important}
+  .cert-sig-name{font-size:10pt!important;margin-top:4px!important}
+  .cert-signatures{margin-top:12px!important}
+  .cert-footer{margin-top:10px!important;font-size:8pt!important}
+  .print-actions{display:none!important}
+  @page{size:A5 portrait;margin:3mm}
+}
+@media(max-width:500px){.stats-row{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 80 80" fill="none">
+      <defs>
+        <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f0d882"/><stop offset="100%" stop-color="#c9a84c"/></linearGradient>
+        <linearGradient id="hg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7ed07e"/><stop offset="100%" stop-color="#1b5e1b"/></linearGradient>
+        <linearGradient id="hg3" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#a5d6a7"/><stop offset="100%" stop-color="#2e7d32"/></linearGradient>
+      </defs>
+      <path d="M20 62 C20 62 18 40 32 26 C42 16 58 14 62 14 C62 14 64 30 54 42 C44 54 28 58 20 62Z" fill="url(#hg2)" opacity=".95"/>
+      <path d="M20 62 C30 48 42 36 62 14" stroke="url(#hg)" stroke-width="1.5" stroke-linecap="round" opacity=".9"/>
+      <path d="M14 20 C18 24 14 30 18 34 C22 38 18 44 22 48" stroke="url(#hg)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <path d="M22 20 C18 24 22 30 18 34 C14 38 18 44 14 48" stroke="url(#hg3)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <line x1="14" y1="24" x2="22" y2="24" stroke="url(#hg)" stroke-width="1.2" opacity=".7"/>
+      <line x1="14" y1="30" x2="22" y2="30" stroke="url(#hg)" stroke-width="1.2" opacity=".7"/>
+      <line x1="14" y1="36" x2="22" y2="36" stroke="url(#hg)" stroke-width="1.2" opacity=".7"/>
+      <line x1="14" y1="42" x2="22" y2="42" stroke="url(#hg)" stroke-width="1.2" opacity=".7"/>
+    </svg>
+    <div class="logo-text">
+      <div class="logo-name">Gene<span>Axe</span></div>
+      <div class="logo-sub">Génétique bovine · FEMAGA</div>
+    </div>
+  </div>
+  <nav style="display:flex;gap:.25rem">
+    <button class="nav-btn active" onclick="goPage('accueil',this)">🏠</button>
+    <button class="nav-btn" onclick="goPage('nouvelle',this)">+ IA</button>
+    <button class="nav-btn" onclick="goPage('historique',this)">📋</button>
+    <button class="nav-btn" onclick="goPage('eleveurs',this)">👨‍🌾</button>
+  </nav>
+</header>
+
+<!-- ACCUEIL -->
+<div class="page active" id="page-accueil">
+  <div style="margin-bottom:1rem"><div class="page-title">Tableau de bord</div><div style="font-size:.82rem;color:var(--gris)" id="date-today"></div></div>
+  <div class="stats-row" id="stats-row"></div>
+  <div class="card"><div class="card-title">Inséminations du jour</div><div id="ia-today"></div></div>
+  <div class="card"><div class="card-title">Taux de réussite par taureau</div><div id="taux-taureaux"></div></div>
+</div>
+
+<!-- NOUVELLE IA -->
+<div class="page" id="page-nouvelle">
+  <div class="page-title" style="margin-bottom:1rem">💉 Nouvelle insémination</div>
+  <div class="card">
+    <div class="card-title">Éleveur & Animal</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Commune (الجماعة)</label>
+        <select id="n-commune" onchange="updateDouars()">
+          <option value="">— Choisir —</option>
+          <option>Ameur - Salé</option><option>Laayayda - Salé</option><option>Sidi Bouknadel</option>
+          <option>Haddada - Kénitra</option><option>Sidi Taibi - Kénitra</option>
+          <option>Sidi Allal Bahraoui</option><option>Oum Azza - Skhirat-Témara</option>
+          <option>Youssoufia - Rabat</option><option>Shoul - Salé</option>
+          <option>Hssaine - Salé</option><option>My Driss Ghbal - Rommani Khémisset</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Douar (دوار)</label>
+        <select id="n-douar"><option value="">— Choisir commune d'abord —</option></select>
+      </div>
+      <div class="form-group">
+        <label>Nom de l'éleveur * — إسم الكساب</label>
+        <input type="text" id="n-eleveur" list="list-eleveurs" placeholder="Nom complet" oninput="autocompleteEleveur()">
+        <datalist id="list-eleveurs"></datalist>
+      </div>
+      <div class="form-group">
+        <label>Code de l'éleveur</label>
+        <input type="text" id="n-code-eleveur" placeholder="Code">
+      </div>
+      <div class="form-group">
+        <label>Nom du circuit IA</label>
+        <input type="text" id="n-circuit" placeholder="Nom du circuit">
+      </div>
+      <div class="form-group">
+        <label>Code du circuit IA</label>
+        <input type="text" id="n-code-circuit" placeholder="Code circuit">
+      </div>
+      <div class="form-group">
+        <label>Identification MA... *</label>
+        <input type="text" id="n-id-animal" placeholder="Ex: MA 6070...">
+      </div>
+      <div class="form-group">
+        <label>Race de la Vache 🐮</label>
+        <select id="n-nom-animal">
+          <option value="">— Choisir la race —</option>
+          <option>HOL/PN</option><option>Mb</option><option>Red Hol</option>
+          <option>PN/CR</option><option>Mb/CR</option><option>PR/CR</option>
+          <option>L/N</option><option>L/R</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>📅 Date de naissance / Âge</label>
+        <select id="n-age">
+          <option value="">— Choisir l'âge —</option>
+          <option>Génisse</option><option>4 Ans</option><option>6 Ans</option>
+          <option>8 Ans</option><option>8 Ans et +</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Insémination actuelle</div>
+    <div class="form-grid">
+      <div class="form-group"><label>📅 Date *</label><input type="date" id="n-date"></div>
+      <div class="form-group"><label>🕐 Heure</label><input type="time" id="n-heure"></div>
+      <div class="form-group">
+        <label>Rang (IA n°)</label>
+        <select id="n-rang"><option value="1">1ère IA</option><option value="2">2ème IA</option><option value="3">3ème IA</option><option value="4">4ème IA</option></select>
+      </div>
+      <div class="form-group"><label>N° paillette</label><input type="text" id="n-paillette" placeholder="Ex: FR1234-A"></div>
+      <div class="form-group">
+        <label>Taureau utilisé *</label>
+        <input type="text" id="n-taureau" list="list-taureaux" placeholder="Nom du taureau">
+        <datalist id="list-taureaux"></datalist>
+      </div>
+      <div class="form-group">
+        <label>Race</label>
+        <select id="n-race">
+          <option value="">— Choisir —</option>
+          <option>BBB (Blanc Bleu Belge)</option><option>Charolais</option><option>Limousin</option>
+          <option>Blonde d'Aquitaine</option><option>Angus</option><option>Normande</option>
+          <option>Montbéliarde</option><option>Prim'Holstein</option><option>Red Holstein</option>
+          <option>Tarentaise</option><option>Simmental</option><option>Piémontaise</option>
+          <option>Salers</option><option>Aubrac</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Résultat</label>
+        <select id="n-resultat"><option value="attente">En attente</option><option value="gestante">✅ Gestante</option><option value="vide">❌ Vide</option></select>
+      </div>
+      <div class="form-group"><label>🔢 N° certificat</label><input type="text" id="n-num-cert" placeholder="Auto-généré"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+    <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveIA()">✓ Enregistrer</button>
+    <button class="btn btn-green" style="flex:1;justify-content:center" onclick="saveAndPrint()">🖨 Enregistrer & Imprimer</button>
+  </div>
+</div>
+
+<!-- HISTORIQUE -->
+<div class="page" id="page-historique">
+  <div class="toolbar">
+    <div class="page-title">Inséminations</div>
+    <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="search-hist" placeholder="Rechercher..." oninput="renderHistorique()"></div>
+  </div>
+  <div id="hist-list"></div>
+</div>
+
+<!-- ELEVEURS -->
+<div class="page" id="page-eleveurs">
+  <div class="toolbar">
+    <div class="page-title">Mes éleveurs</div>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-eleveur')">+ Ajouter</button>
+  </div>
+  <div id="eleveurs-list"></div>
+</div>
+
+<!-- MODAL ELEVEUR -->
+<div class="modal-overlay" id="modal-eleveur">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">👨‍🌾 Nouvel éleveur</div>
+    <div class="form-grid">
+      <div class="form-group"><label>Nom *</label><input type="text" id="e-nom" placeholder="Nom complet"></div>
+      <div class="form-group"><label>Code éleveur</label><input type="text" id="e-code" placeholder="Code"></div>
+      <div class="form-group"><label>Commune</label><input type="text" id="e-commune" placeholder="Commune"></div>
+      <div class="form-group"><label>Douar</label><input type="text" id="e-douar" placeholder="Douar"></div>
+      <div class="form-group"><label>Téléphone</label><input type="tel" id="e-tel" placeholder="06..."></div>
+      <div class="form-group"><label>Circuit IA</label><input type="text" id="e-circuit" placeholder="Circuit"></div>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:1rem">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveEleveur()">✓ Enregistrer</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-eleveur')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CERTIFICAT -->
+<div class="modal-overlay" id="modal-certificat">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📄 Certificat d'insémination</div>
+    <div id="certificat-preview"></div>
+    <div class="print-actions">
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimer</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-certificat')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESULTAT -->
+<div class="modal-overlay" id="modal-resultat">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="res-title">Mettre à jour le résultat</div>
+    <div style="display:flex;flex-direction:column;gap:.75rem;margin-top:.5rem">
+      <button class="btn btn-green" style="width:100%;justify-content:center" onclick="setResultat('gestante')">✅ Gestante</button>
+      <button class="btn btn-danger" style="width:100%;justify-content:center" onclick="setResultat('vide')">❌ Vide</button>
+      <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="setResultat('attente')">⏳ En attente</button>
+      <button class="btn btn-outline" style="width:100%;justify-content:center" onclick="closeModal('modal-resultat')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// DATA
+let DB = JSON.parse(localStorage.getItem('geneaxe') || 'null') || {ia:[],eleveurs:[],nextNum:13501};
+let currentIAId = null;
+
+const COMMUNES_DOUARS = {
+  'Ameur - Salé':['Brahma','Ouled Ayachi','Dagga','Fouarat','Sidi Amira'],
+  'Laayayda - Salé':['Sidi Abdellah','Mazza'],
+  'Sidi Bouknadel':['Zardal','Douislim','Hancha','Ouled Sbeta'],
+  'Haddada - Kénitra':['Ouled Taleb'],
+  'Sidi Taibi - Kénitra':['Ouled Taleb','Ouled Moussa','Sidi Boughaba'],
+  'Sidi Allal Bahraoui':['Zayli','Ait Ali Oulahcen','Ait Malek','Dhar Dib'],
+  'Oum Azza - Skhirat-Témara':['Ouled Leila','Chtatba','Ain Aouda','Menzeh'],
+  'Youssoufia - Rabat':['Oulja','Khalouya'],
+  'Shoul - Salé':['Hammoumiyine','Gaabba','Fkhouda','Touilae','Rouichat','Rouaouna','Laabadla','Ouled Kamel','Bnibrour','Jouaneb','Farch','Lahba','Bniaabdlli','Hrouch','Ouled Aguil','Hyayda','Azzouziyine','Mfalha','Ouled Alouane','Rjila','Ouled Jaber','Jlalja','Sidi Chafi','Sidi Azzouz','Jbabra','Souk Sebt','Chaaba Lharcha','Mnijel','Sebaria','Dhamna','Ouled Aissa','Ouled Maalla'],
+  'My Driss Ghbal - Rommani Khémisset':['Ouled Mahdi','Ouled Mansour','Ghbal Centre','Kermate'],
+  'Hssaine - Salé':['Ouled Hlal','Riah','Dourafae','Oulja','Oko','Sidi Hamida','Asakra']
+};
+
+function save(){localStorage.setItem('geneaxe',JSON.stringify(DB));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function today(){return new Date().toISOString().split('T')[0];}
+function nowTime(){return new Date().toTimeString().slice(0,5);}
+function fmt(d){if(!d)return '—';const[y,m,j]=d.split('-');return j+'/'+m+'/'+y;}
+
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='nouvelle')initForm();
+  render();
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+});
+
+function updateDouars(){
+  const commune=document.getElementById('n-commune').value;
+  const sel=document.getElementById('n-douar');
+  const douars=COMMUNES_DOUARS[commune]||[];
+  if(!commune){sel.innerHTML='<option value="">— Choisir commune d\'abord —</option>';return;}
+  if(!douars.length){sel.innerHTML='<option value="">— Aucun douar —</option>';return;}
+  sel.innerHTML='<option value="">— Choisir un douar —</option>'+douars.map(d=>'<option>'+d+'</option>').join('');
+}
+
+function initForm(){
+  document.getElementById('n-date').value=today();
+  document.getElementById('n-heure').value=nowTime();
+  document.getElementById('n-num-cert').value=String(DB.nextNum);
+  const t=[...new Set(DB.ia.map(i=>i.taureau).filter(Boolean))];
+  document.getElementById('list-taureaux').innerHTML=t.map(x=>'<option value="'+x+'">').join('');
+  document.getElementById('list-eleveurs').innerHTML=DB.eleveurs.map(e=>'<option value="'+e.nom+'">').join('');
+}
+
+function autocompleteEleveur(){
+  const nom=document.getElementById('n-eleveur').value.trim();
+  const e=DB.eleveurs.find(x=>x.nom.toLowerCase()===nom.toLowerCase());
+  if(e){
+    if(e.commune){document.getElementById('n-commune').value=e.commune;updateDouars();if(e.douar)document.getElementById('n-douar').value=e.douar;}
+    if(e.code)document.getElementById('n-code-eleveur').value=e.code;
+    if(e.circuit)document.getElementById('n-circuit').value=e.circuit;
+  }
+}
+
+function collectForm(){
+  return {
+    id:uid(),
+    numCert:document.getElementById('n-num-cert').value||String(DB.nextNum),
+    commune:document.getElementById('n-commune').value,
+    douar:document.getElementById('n-douar').value,
+    eleveur:document.getElementById('n-eleveur').value.trim(),
+    codeEleveur:document.getElementById('n-code-eleveur').value.trim(),
+    circuit:document.getElementById('n-circuit').value.trim(),
+    codeCircuit:document.getElementById('n-code-circuit').value.trim(),
+    idAnimal:document.getElementById('n-id-animal').value.trim(),
+    nomAnimal:document.getElementById('n-nom-animal').value,
+    age:document.getElementById('n-age').value,
+    date:document.getElementById('n-date').value,
+    heure:document.getElementById('n-heure').value,
+    rang:document.getElementById('n-rang').value,
+    paillette:document.getElementById('n-paillette').value.trim(),
+    taureau:document.getElementById('n-taureau').value.trim(),
+    race:document.getElementById('n-race').value,
+    resultat:document.getElementById('n-resultat').value
+  };
+}
+
+function validate(ia){
+  if(!ia.eleveur){alert('Le nom de l\'éleveur est obligatoire');return false;}
+  if(!ia.idAnimal){alert('L\'identification de l\'animal est obligatoire');return false;}
+  if(!ia.taureau){alert('Le taureau est obligatoire');return false;}
+  return true;
+}
+
+function saveIA(){
+  const ia=collectForm();
+  if(!validate(ia))return;
+  DB.ia.unshift(ia);DB.nextNum++;
+  if(!DB.eleveurs.find(e=>e.nom.toLowerCase()===ia.eleveur.toLowerCase()))
+    DB.eleveurs.push({id:uid(),nom:ia.eleveur,code:ia.codeEleveur,commune:ia.commune,douar:ia.douar,circuit:ia.circuit});
+  save();alert('✅ Insémination enregistrée !');resetForm();
+  goPage('historique',document.querySelectorAll('.nav-btn')[2]);
+}
+
+function saveAndPrint(){
+  const ia=collectForm();
+  if(!validate(ia))return;
+  DB.ia.unshift(ia);DB.nextNum++;
+  if(!DB.eleveurs.find(e=>e.nom.toLowerCase()===ia.eleveur.toLowerCase()))
+    DB.eleveurs.push({id:uid(),nom:ia.eleveur,code:ia.codeEleveur,commune:ia.commune,douar:ia.douar,circuit:ia.circuit});
+  save();resetForm();showCertificat(ia);
+}
+
+function resetForm(){
+  ['n-eleveur','n-code-eleveur','n-circuit','n-code-circuit','n-id-animal','n-paillette','n-taureau'].forEach(id=>document.getElementById(id).value='');
+  ['n-commune','n-nom-animal','n-age','n-race'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('n-douar').innerHTML='<option value="">— Choisir commune d\'abord —</option>';
+  document.getElementById('n-rang').value='1';
+  document.getElementById('n-resultat').value='attente';
+  document.getElementById('n-date').value=today();
+  document.getElementById('n-heure').value=nowTime();
+  document.getElementById('n-num-cert').value=String(DB.nextNum);
+}
+
+function showCertificat(ia){
+  document.getElementById('certificat-preview').innerHTML=buildCertificat(ia);
+  openModal('modal-certificat');
+}
+
+function buildCertificat(ia){
+  const rl=['','1ère','2ème','3ème','4ème'][ia.rang]||ia.rang+'ème';
+  const cowSvg='<span style="font-size:32px;line-height:1">🐂</span>';
+  return '<div class="certificat">'
+    +'<div class="cert-header" style="padding-bottom:10px;margin-bottom:10px;">'
+    +'<div><div style="display:flex;align-items:center;gap:6px;">'
+    +'<svg width="32" height="32" viewBox="0 0 80 80" fill="none"><path d="M20 62 C20 62 18 40 32 26 C42 16 58 14 62 14 C62 14 64 30 54 42 C44 54 28 58 20 62Z" fill="#2e7d32" opacity=".9"/><path d="M20 62 C30 48 42 36 62 14" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/><path d="M14 20 C18 24 14 30 18 34 C22 38 18 44 22 48" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M22 20 C18 24 22 30 18 34 C14 38 18 44 14 48" stroke="#43a047" stroke-width="2" stroke-linecap="round" fill="none"/><line x1="14" y1="28" x2="22" y2="28" stroke="#c9a84c" stroke-width="1.2" opacity=".7"/><line x1="14" y1="36" x2="22" y2="36" stroke="#c9a84c" stroke-width="1.2" opacity=".7"/><line x1="14" y1="44" x2="22" y2="44" stroke="#c9a84c" stroke-width="1.2" opacity=".7"/></svg>'
+    +'<div><div style="font-size:16px;font-weight:900;color:#1b5e20;font-family:Syne,sans-serif">GeneAxe <span style="font-size:11px;font-weight:400;color:#666">Sarl AU</span></div>'
+    +'<div style="font-size:10px;font-weight:700;color:#2e7d32;letter-spacing:.1em;text-transform:uppercase">Agriculture</div></div>'
+    +'</div></div>'
+    +'<div style="text-align:center"><div style="font-size:15px;color:#1b5e20;font-weight:900">FEMAGA</div>'
+    +'<div style="font-size:7px;color:#555;font-family:Tajawal,sans-serif;direction:rtl;line-height:1.4">الفدرالية المغربية لمقاولات التحسين الوراثي الحيواني</div></div>'
+    +'<div style="text-align:center">'+cowSvg+'</div>'
+    +'</div>'
+    +'<div class="cert-main-title">Certificat d\'insémination artificielle</div>'
+    +'<div class="cert-subtitle">شهادة التلقيح الاصطناعي</div>'
+    +'<div class="cert-num">N° '+ia.numCert+'</div>'
+    +'<div class="cert-section"><div class="cert-section-title">Localisation — الموقع الجغرافي</div>'
+    +'<div class="cert-row"><div class="cert-field"><div class="cert-field-label">Commune — الجماعة</div><div class="cert-field-value">'+ia.commune+'</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">Douar — دوار</div><div class="cert-field-value">'+ia.douar+'</div></div></div></div>'
+    +'<div class="cert-section"><div class="cert-section-title">Circuit & Éleveur — المدار والمربي</div>'
+    +'<div class="cert-row"><div class="cert-field"><div class="cert-field-label">Nom du circuit IA</div><div class="cert-field-value">'+ia.circuit+'</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">Code du circuit IA</div><div class="cert-field-value">'+ia.codeCircuit+'</div></div></div>'
+    +'<div class="cert-row"><div class="cert-field"><div class="cert-field-label">Nom de l\'éleveur — اسم المربي</div><div class="cert-field-value">'+ia.eleveur+'</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">Code de l\'éleveur</div><div class="cert-field-value">'+ia.codeEleveur+'</div></div></div></div>'
+    +'<div class="cert-section"><div class="cert-section-title">Animal — الحيوان</div>'
+    +'<div class="cert-row"><div class="cert-field"><div class="cert-field-label">Identification MA</div><div class="cert-field-value">'+ia.idAnimal+'</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">Race de la vache</div><div class="cert-field-value">'+ia.nomAnimal+'</div></div>'
+    +'<div class="cert-field" style="max-width:100px"><div class="cert-field-label">Âge</div><div class="cert-field-value">'+ia.age+'</div></div></div></div>'
+    +'<div class="cert-ia-box"><div class="cert-ia-title">Insémination actuelle — التلقيح الحالي</div>'
+    +'<div class="cert-row"><div class="cert-field"><div class="cert-field-label">Rang</div><div class="cert-field-value">'+rl+' IA</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">Date</div><div class="cert-field-value">'+fmt(ia.date)+'</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">Heure</div><div class="cert-field-value">'+(ia.heure||'')+' H</div></div></div>'
+    +'<div class="cert-row"><div class="cert-field"><div class="cert-field-label">Taureau utilisé</div><div class="cert-field-value">'+ia.taureau+'</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">N° paillette</div><div class="cert-field-value">'+(ia.paillette||'')+'</div></div>'
+    +'<div class="cert-field"><div class="cert-field-label">Race</div><div class="cert-field-value">'+(ia.race||'')+'</div></div></div></div>'
+    +'<div class="cert-signatures">'
+    +'<div class="cert-sig"><div class="cert-sig-label">Signature technicien inséminateur</div><div class="cert-sig-box"></div>'
+    +'<div class="cert-sig-name">Zakaria MAIACH</div><div style="font-size:8px;color:#1b5e20;font-weight:600">Technicien Inséminateur</div>'
+    +'<div style="font-size:8px;color:#777">Tél : 06 41 54 55 54</div></div>'
+    +'<div class="cert-sig"><div class="cert-sig-label">Signature de l\'éleveur / اسم المربي</div><div class="cert-sig-box"></div>'
+    +'<div class="cert-sig-name">'+ia.eleveur+'</div></div></div>'
+    +'<div class="cert-footer"><span>Gene Axe Sarl AU — FEMAGA</span><span>Certificat N° '+ia.numCert+' | '+fmt(ia.date)+'</span></div>'
+    +'</div>';
+}
+
+function badgeStatut(s){
+  return {gestante:'<span class="badge badge-vert">✅ Gestante</span>',vide:'<span class="badge badge-rouge">❌ Vide</span>',attente:'<span class="badge badge-orange">⏳ En attente</span>'}[s]||'';
+}
+
+function iaCard(ia){
+  return '<div class="ia-item" onclick="openIAActions(\''+ia.id+'\')"><div class="ia-item-left">'
+    +'<div class="ia-item-num">N° '+ia.numCert+'</div>'
+    +'<div class="ia-item-main">'+ia.eleveur+' — '+(ia.idAnimal||ia.nomAnimal)+'</div>'
+    +'<div class="ia-item-sub">'+fmt(ia.date)+(ia.heure?' · '+ia.heure:'')+' · '+ia.taureau+' · '+(['','1ère','2ème','3ème','4ème'][ia.rang]||ia.rang+'ème')+' IA</div>'
+    +'</div><div style="margin-left:.75rem">'+badgeStatut(ia.resultat)+'</div></div>';
+}
+
+function render(){renderAccueil();renderHistorique();renderEleveurs();}
+
+function renderAccueil(){
+  const t=today();
+  document.getElementById('date-today').textContent=new Date().toLocaleDateString('fr-MA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const taj=DB.ia.filter(i=>i.date===t);
+  const total=DB.ia.length,gest=DB.ia.filter(i=>i.resultat==='gestante').length;
+  const avecR=DB.ia.filter(i=>i.resultat!=='attente').length;
+  const taux=avecR?Math.round(gest/avecR*100):0;
+  document.getElementById('stats-row').innerHTML=
+    '<div class="stat-mini"><div class="stat-mini-val">'+taj.length+'</div><div class="stat-mini-lbl">Aujourd\'hui</div></div>'
+    +'<div class="stat-mini"><div class="stat-mini-val">'+total+'</div><div class="stat-mini-lbl">Total IA</div></div>'
+    +'<div class="stat-mini"><div class="stat-mini-val" style="color:var(--vert)">'+gest+'</div><div class="stat-mini-lbl">Gestantes</div></div>'
+    +'<div class="stat-mini"><div class="stat-mini-val" style="color:#1b5e20">'+taux+'%</div><div class="stat-mini-lbl">Réussite</div></div>';
+  document.getElementById('ia-today').innerHTML=taj.length?'<div class="ia-list">'+taj.map(iaCard).join('')+'</div>':'<div class="empty"><div style="font-size:2rem">🌅</div><p>Aucune insémination aujourd\'hui</p></div>';
+  const tau={};
+  DB.ia.forEach(i=>{if(!i.taureau)return;if(!tau[i.taureau])tau[i.taureau]={t:0,p:0};tau[i.taureau].t++;if(i.resultat==='gestante')tau[i.taureau].p++;});
+  const arr=Object.entries(tau).sort((a,b)=>b[1].t-a[1].t).slice(0,6);
+  document.getElementById('taux-taureaux').innerHTML=arr.length?arr.map(([n,s])=>{
+    const pct=s.t?Math.round(s.p/s.t*100):0;
+    const c=pct>=60?'var(--vert)':pct>=40?'#b45309':'var(--rouge)';
+    return '<div style="margin-bottom:.875rem"><div style="display:flex;justify-content:space-between;margin-bottom:.25rem;font-size:.85rem"><span style="font-weight:600">'+n+'</span><span style="color:'+c+';font-weight:700">'+pct+'% <span style="color:var(--gris);font-weight:400">('+s.p+'/'+s.t+')</span></span></div>'
+      +'<div style="background:#eee;border-radius:99px;height:8px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+c+';border-radius:99px"></div></div></div>';
+  }).join(''):'<div class="empty"><p>Aucune donnée</p></div>';
+}
+
+function renderHistorique(){
+  const q=(document.getElementById('search-hist')?document.getElementById('search-hist').value:'').toLowerCase();
+  const lst=DB.ia.filter(i=>!q||i.eleveur.toLowerCase().includes(q)||i.taureau.toLowerCase().includes(q)||(i.idAnimal||'').toLowerCase().includes(q));
+  document.getElementById('hist-list').innerHTML=lst.length?'<div class="ia-list">'+lst.map(iaCard).join('')+'</div>':'<div class="empty"><div style="font-size:2rem">📋</div><p>Aucune insémination</p></div>';
+}
+
+function renderEleveurs(){
+  const el=document.getElementById('eleveurs-list');
+  if(!DB.eleveurs.length){el.innerHTML='<div class="empty"><div style="font-size:2rem">👨‍🌾</div><p>Aucun éleveur</p></div>';return;}
+  el.innerHTML='<div class="ia-list">'+DB.eleveurs.map(e=>{
+    const n=DB.ia.filter(i=>i.eleveur.toLowerCase()===e.nom.toLowerCase()).length;
+    return '<div class="ia-item"><div class="ia-item-left"><div class="ia-item-main">'+e.nom+'</div>'
+      +'<div class="ia-item-sub">'+[e.commune,e.douar].filter(Boolean).join(' · ')+(e.tel?' · 📞 '+e.tel:'')+'</div>'
+      +'<div class="ia-item-sub">'+n+' insémination(s)</div></div>'
+      +'<button class="btn btn-sm btn-outline" onclick="filterEleveur(\''+e.nom+'\')">Voir IA</button></div>';
+  }).join('')+'</div>';
+}
+
+function openIAActions(id){
+  currentIAId=id;
+  const ia=DB.ia.find(i=>i.id===id);if(!ia)return;
+  const m=document.createElement('div');
+  m.className='modal-overlay open';m.id='modal-actions-temp';
+  m.innerHTML='<div class="modal"><div class="modal-handle"></div>'
+    +'<div class="modal-title">'+ia.eleveur+'</div>'
+    +'<div style="font-size:.82rem;color:var(--gris);margin-bottom:1rem">'+fmt(ia.date)+' · N° '+ia.numCert+'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:.65rem">'
+    +'<button class="btn btn-primary" style="width:100%;justify-content:center" onclick="printIA(\''+id+'\')">🖨️ Imprimer le certificat</button>'
+    +'<button class="btn btn-outline" style="width:100%;justify-content:center" onclick="openResModal(\''+id+'\')">📝 Mettre à jour le résultat</button>'
+    +'<button class="btn btn-danger" style="width:100%;justify-content:center" onclick="deleteIA(\''+id+'\')">🗑 Supprimer</button>'
+    +'<button class="btn btn-outline" style="width:100%;justify-content:center" onclick="document.getElementById(\'modal-actions-temp\').remove()">Fermer</button>'
+    +'</div></div>';
+  m.addEventListener('click',e=>{if(e.target===m)m.remove();});
+  document.body.appendChild(m);
+}
+
+function printIA(id){document.getElementById('modal-actions-temp')?.remove();const ia=DB.ia.find(i=>i.id===id);if(ia)showCertificat(ia);}
+function openResModal(id){document.getElementById('modal-actions-temp')?.remove();currentIAId=id;const ia=DB.ia.find(i=>i.id===id);if(ia)document.getElementById('res-title').textContent=ia.eleveur+' — '+(ia.idAnimal||ia.nomAnimal);openModal('modal-resultat');}
+function setResultat(r){const ia=DB.ia.find(i=>i.id===currentIAId);if(ia){ia.resultat=r;save();}closeModal('modal-resultat');render();}
+function deleteIA(id){document.getElementById('modal-actions-temp')?.remove();if(!confirm('Supprimer cette insémination ?'))return;DB.ia=DB.ia.filter(i=>i.id!==id);save();render();}
+function saveEleveur(){
+  const nom=document.getElementById('e-nom').value.trim();if(!nom){alert('Nom obligatoire');return;}
+  DB.eleveurs.push({id:uid(),nom,code:document.getElementById('e-code').value.trim(),commune:document.getElementById('e-commune').value.trim(),douar:document.getElementById('e-douar').value.trim(),tel:document.getElementById('e-tel').value.trim(),circuit:document.getElementById('e-circuit').value.trim()});
+  save();closeModal('modal-eleveur');['e-nom','e-code','e-commune','e-douar','e-tel','e-circuit'].forEach(id=>document.getElementById(id).value='');render();
+}
+function filterEleveur(nom){document.getElementById('search-hist').value=nom;goPage('historique',document.querySelectorAll('.nav-btn')[2]);}
+
+initForm();render();
+</script>
+</body>
+</html>
